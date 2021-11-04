@@ -31,22 +31,23 @@ router.post('/', withAuth, (req, res) => {
 
 // Delete a comment
 router.delete('/:id', withAuth, (req, res) => {
-    Comment.destroy({
-        where: {
-          id: req.params.id
-        }
-      })
-        .then(data => {
-          if (!data) {
-            res.status(404).json({ message: 'No comment found with this id' });
-            return;
-          }
-          res.json(data);
-        })
-        .catch(err => {
-          console.log(err);
-          res.status(500).json(err);
-        });
+  try {
+    const commentData = await Comment.destroy({
+      where: {
+        id: req.params.id,
+      },
     });
+
+    if (!commentData) {
+      res.status(404).json({ message: 'No comment found with this id!' });
+      return;
+    }
+    res.json(commentData);
+
+  } catch (err) {
+    res.status(500).json(err);
+  }
+})
+
 
 module.exports = router;
